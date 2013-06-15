@@ -14,7 +14,7 @@ namespace ProjectEulerSolutions
             Stopwatch sw = Stopwatch.StartNew();
 
             // begin problem execution!
-            new Problem11();
+            new Problem13();
 
             sw.Stop();
             Console.WriteLine("Execution time: {0}ms", sw.Elapsed.Milliseconds);

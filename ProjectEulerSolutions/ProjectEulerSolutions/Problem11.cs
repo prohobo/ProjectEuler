@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace ProjectEulerSolutions
 {
@@ -36,10 +38,76 @@ namespace ProjectEulerSolutions
 
         What is the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 2020 grid?*/
 
+        private int[] gridValues;
+        private int largestProduct = 0;
+
         public Problem11()
         {
+            LoadGrid();
+            FindLargestProduct();
 
-            //Console.WriteLine("Result: " + sum);
+
+            Console.WriteLine("Result: " + largestProduct);
+        }
+
+        private void LoadGrid()
+        {
+            // read the text file
+            StreamReader sr = new StreamReader("problem11_grid.txt");
+            String fileText = sr.ReadToEnd();
+            sr.Close();
+
+            // format into readable array
+            string[] gridValueStrings = Regex.Split(fileText, "[' ']|[\r\n]");
+
+
+            // get the data from the text
+            gridValues = new int[gridValueStrings.Length];
+
+            for (int i = 0; i < gridValueStrings.Length; i++)
+            {
+                if (gridValueStrings[i] != "")
+                {
+                    gridValues[i] = Convert.ToInt32(gridValueStrings[i]);
+                }
+            }
+        }
+
+        private void FindLargestProduct()
+        {
+            for (int i = 0; i < gridValues.Length; i++)
+            {
+                // up/down: +20
+                if (i < 20 * 16)
+                    GetProduct(20, i);
+
+                // left/right: +1
+                if (i < (16 + 20 * ((i - 1) / 20)))
+                    GetProduct(1, i);
+
+                // diagonal A: +21
+                if (i < 20 * 16 && i < (16 + 20 * ((i - 1) / 20)))
+                    GetProduct(21, i);
+
+                // diagonal B: +19
+                if (i < 20 * 16 && i >= (4 + 20 * ((i - 1) / 20)))
+                    GetProduct(19, i);
+            }
+        }
+
+        private void GetProduct(int _delta, int _start)
+        {
+            int index = _start;
+            int product = gridValues[_start];
+
+            for (int i = 0; i < 3; i++)
+            {
+                index += _delta;
+                product *= gridValues[index];
+            }
+
+            if (product > largestProduct)
+                largestProduct = product;
         }
     }
 }
